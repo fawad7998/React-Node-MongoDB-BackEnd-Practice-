@@ -2,11 +2,13 @@ const mongoose = require('mongoose');
 const express = require('express');
 const cors = require('cors');
 const noteRoutes = require('./routes/noteRoutes');
+const authRouters = require('./routes/userRoutes');
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 app.use('/api/v1', noteRoutes);
+app.use('/api/auth', authRouters);
 
 // db connection
 mongoose
