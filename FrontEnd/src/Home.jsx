@@ -1,26 +1,28 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import FormData from './component/Create';
 
 function Data() {
     const [posts, setPosts] = useState([]);
     const [editPost, setEditPost] = useState(null);
 
+    // View Section
     useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch('http://127.0.0.1:3000/api/v1/view');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch data');
+                }
+                const data = await response.json();
+                setPosts(data.data);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
         fetchData();
     }, []);
 
-    const fetchData = async () => {
-        try {
-            const response = await fetch('http://127.0.0.1:3000/api/v1/view');
-            if (!response.ok) {
-                throw new Error('Failed to fetch data');
-            }
-            const data = await response.json();
-            setPosts(data.data);
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    };
+
 
     const handleDelete = async (postId) => {
         try {
@@ -39,6 +41,8 @@ function Data() {
         }
     };
 
+
+    // Edit Section
     const handleEdit = (post) => {
         setEditPost(post);
     };
