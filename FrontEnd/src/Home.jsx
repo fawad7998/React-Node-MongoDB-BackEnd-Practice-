@@ -6,24 +6,29 @@ function Data() {
     const [editPost, setEditPost] = useState(null);
 
     // View Section
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await fetch('http://127.0.0.1:3000/api/v1/view');
-                if (!response.ok) {
-                    throw new Error('Failed to fetch data');
-                }
-                const data = await response.json();
-                setPosts(data.data);
-            } catch (error) {
-                console.error('Error fetching data:', error);
+    const fetchData = async () => {
+        try {
+            const response = await fetch('http://127.0.0.1:3000/api/v1/view');
+            if (!response.ok) {
+                throw new Error('Failed to fetch data');
             }
-        };
+            const data = await response.json();
+            setPosts(data.data);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+    useEffect(() => {
         fetchData();
     }, []);
 
+    // auto fetch (page cannot reload)
+    useEffect(() => {
+        const interval = setInterval(fetchData, 500); // Corrected setInterval call
+        return () => clearInterval(interval); // Clear interval on component unmount
+    }, []);
 
-
+    // Delete
     const handleDelete = async (postId) => {
         try {
             const response = await fetch(`http://127.0.0.1:3000/api/v1/remove/${postId}`, {
@@ -60,6 +65,7 @@ function Data() {
             if (response.ok) {
                 console.log('Post updated successfully');
                 setPosts(posts.map(post => post._id === updatedPost._id ? updatedPost : post));
+
                 setEditPost(null);
             } else {
                 console.error('Failed to update post');
